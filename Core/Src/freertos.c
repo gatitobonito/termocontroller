@@ -22,11 +22,12 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "termo_sensor.h"
+
 #define NTC1  1
 #define NTC2  2
 
 extern void get_adc_data(uint8_t ntc);
-extern uint16_t median_filter (uint16_t *p, size_t n);
 extern void CAN_send_data(int8_t data1, int8_t data2);
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -91,25 +92,6 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   * @retval None
   */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
   /* creation of defaultTask */
@@ -120,14 +102,6 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of TaskNTC2 */
   TaskNTC2Handle = osThreadNew(StartTaskNTC2, NULL, &TaskNTC2_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_EVENTS */
-  /* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -165,7 +139,7 @@ void StartTaskNTC1(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    get_adc_data(NTC2);
+    get_adc_data(NTC1);
     osDelay(10);
   }
   /* USER CODE END StartTaskNTC1 */
@@ -184,7 +158,7 @@ void StartTaskNTC2(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    get_adc_data(NTC1);
+    get_adc_data(NTC2);
     osDelay(10);
   }
   /* USER CODE END StartTaskNTC2 */

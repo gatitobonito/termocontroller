@@ -24,8 +24,8 @@
 
 /* USER CODE BEGIN 0 */
 
-extern uint16_t ntc1_raw_adc[] ;
-extern uint16_t ntc2_raw_adc[];
+extern filter_ntc_t ntc1_raw_adc;
+extern filter_ntc_t ntc2_raw_adc;
 /* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc1;
@@ -263,12 +263,12 @@ void get_adc_data(uint8_t ntc)
   {
     HAL_ADC_Start(&hadc1);
     HAL_ADC_PollForConversion(&hadc1,100);
-    add_number(ntc1_raw_adc,HAL_ADC_GetValue(&hadc1));
+    add_number(ntc1_raw_adc, HAL_ADC_GetValue(&hadc1));
   }
   else {
     HAL_ADC_Start(&hadc2);
     HAL_ADC_PollForConversion(&hadc2,100);
-    add_number(ntc2_raw_adc,HAL_ADC_GetValue(&hadc1));
+    add_number(ntc2_raw_adc, HAL_ADC_GetValue(&hadc1));
   }
 }
 
@@ -276,10 +276,10 @@ uint16_t aggregate_data(uint8_t ntc)
 {
   if(ntc==1)
   {
-    return ntc_get_temp(median_filter(ntc1_raw_adc,10));
+    return ntc_get_temp(median_filter(ntc1_raw_adc.ntc_raw_adc,10));
   }
   else {
-    return ntc_get_temp(median_filter(ntc2_raw_adc,10));
+    return ntc_get_temp(median_filter(ntc2_raw_adc.ntc_raw_adc,10));
   }
 
 }

@@ -10,35 +10,32 @@
 
 #include "termo_sensor.h"
 
-#define FILTER_SIZE 10
-uint16_t ntc1_raw_adc[FILTER_SIZE] = {0};
-uint16_t ntc2_raw_adc[FILTER_SIZE] = {0};
+
 
 #define SERIESRESISTOR 10000 // 10K ohm resistor in series
 #define BCOEFFICIENT 3950 // Beta coefficient for the thermistor
 #define NOMINALRESISTANCE 10000 // Resistance at 25 degrees Celsius
 #define NOMINALTEMPERATURE 25 // Nominal temperature in Celsius
 
+filter_ntc_t ntc1_raw_adc;
+filter_ntc_t ntc2_raw_adc;
 
-
-
-
-void add_number(uint16_t *filter, uint16_t number) {
-  static uint8_t cnt=0;
-  if (cnt < FILTER_SIZE) {
-    filter[cnt++] = number;
+void add_number(filter_ntc_t ntc_raw, uint16_t number)
+{
+  if (ntc_raw.cnt< FILTER_SIZE) {
+    ntc_raw.ntc_raw_adc[ntc_raw.cnt++] = number;
   } else {
     // Shift values to remove the oldest one
     for (int i = 1; i < FILTER_SIZE; i++) {
-      filter[i - 1] = filter[i];
+      ntc_raw.ntc_raw_adc[i - 1] = ntc_raw.ntc_raw_adc[i];
     }
-    filter[FILTER_SIZE - 1] = number; // Add new number
+    ntc_raw.ntc_raw_adc[FILTER_SIZE - 1] = number; // Add new number
   }
 }
 
 uint16_t median_filter (uint16_t *p, size_t n)
 {
-  uint16_t temp=0;
+  uint16_t temp = 0;
   if (n < 2) {
     return 0;
   }
